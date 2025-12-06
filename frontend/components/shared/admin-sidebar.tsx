@@ -35,7 +35,7 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/create-order", label: "Buat Order Baru", icon: PlusCircle },
   { href: "/admin/order-history", label: "Riwayat Order", icon: History },
-  { href: "/admin/customer-database", label: "Database Customer", icon: Users },
+  { href: "/admin/customer-list", label: "Daftar Customer", icon: Users },
 ];
 
 export function AdminSidebar() {

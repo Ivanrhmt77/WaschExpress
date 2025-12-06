@@ -10,16 +10,16 @@ export default function Tracking() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <div className="inline-block mb-4 px-4 py-2 bg-blue-100 rounded-full">
-              <span className="text-sm font-semibold text-blue-600">
+              <span className="text-sm font-semibold text-blue-800">
                 TRACKING SYSTEM
               </span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
               Lacak Pesanan Anda
             </h2>
-            <p className="mt-4 text-xl text-gray-600 leading-relaxed">
-              Masukkan kode unik Anda untuk melihat progres laundry secara
-              real-time, lengkap dengan estimasi selesai berbasis AI.
+            <p className="mt-4 text-lg md:text-xl text-gray-700 leading-relaxed">
+              Masukkan kode unik untuk melihat progres laundry secara real-time,
+              lengkap dengan estimasi selesai berbasis AI.
             </p>
           </div>
 
@@ -28,7 +28,7 @@ export default function Tracking() {
               <Input
                 type="text"
                 placeholder="Contoh: WEX-12345"
-                className="flex-1 text-center sm:text-left text-lg h-16 rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 bg-white"
+                className="flex-1 text-center sm:text-left text-lg h-16 rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 bg-white text-gray-900 placeholder-gray-400"
               />
               <Button
                 size="lg"
@@ -38,18 +38,14 @@ export default function Tracking() {
               </Button>
             </div>
 
-            <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+            <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span>Status real-time</span>
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <span className="text-gray-700">Status real-time</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Estimasi AI</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span>Notifikasi otomatis</span>
+                <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                <span className="text-gray-700">Estimasi AI</span>
               </div>
             </div>
           </div>

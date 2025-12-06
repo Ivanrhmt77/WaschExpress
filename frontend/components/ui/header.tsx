@@ -62,7 +62,6 @@ export default function Header() {
         }`}
       >
         <div className="relative container mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
           <Link
             href="#"
             className="flex items-center gap-2 group"
@@ -90,7 +89,6 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-8 text-sm font-medium">
             {menuItems.map((item) => (
               <Link
@@ -107,7 +105,6 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* CTA & Mobile Toggle */}
           <div className="flex items-center gap-4">
             <Link
               href="#track"
@@ -140,7 +137,6 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Menu */}
       <div
         className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
           isMobileMenuOpen

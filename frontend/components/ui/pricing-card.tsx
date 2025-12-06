@@ -3,6 +3,7 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { Button } from "./button";
 
 export interface PricingCardProps {
   title: string;
@@ -62,7 +63,6 @@ export default function PricingCard({
           ))}
         </div>
 
-        {/* Tombol Link ke #contact */}
         <Link
           href="#contact"
           className="w-full py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 text-white font-bold text-base shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 text-center"

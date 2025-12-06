@@ -36,19 +36,16 @@ export default function ServiceCard({
         ${containerClasses}
       `}
     >
-      {/* Badge POPULER */}
       {highlighted && (
         <div className="absolute top-4 right-4 px-3 py-1 bg-yellow-400 text-blue-900 text-xs font-bold rounded-full">
           POPULER
         </div>
       )}
 
-      {/* Icon */}
       <div className={`rounded-2xl p-6 mb-6 ${iconWrapperClasses}`}>
         {displayedIcon}
       </div>
 
-      {/* Title */}
       <h3
         className={`text-2xl font-bold tracking-tight mb-3 ${
           highlighted ? "text-white" : "text-gray-900"
@@ -57,7 +54,6 @@ export default function ServiceCard({
         {title}
       </h3>
 
-      {/* Description */}
       <p
         className={`mb-6 leading-relaxed ${
           highlighted ? "text-blue-50" : "text-gray-600"
@@ -66,7 +62,6 @@ export default function ServiceCard({
         {description}
       </p>
 
-      {/* Features */}
       <div className="space-y-3 w-full">
         {features.map((feature, index) => (
           <div key={index} className="flex items-center gap-2 text-sm">

@@ -69,7 +69,6 @@ export default function Services() {
       className="py-24 md:py-32 bg-linear-to-b from-gray-50 to-white"
     >
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-20">
           <div className="inline-block mb-5 px-5 py-2.5 bg-blue-100 rounded-full">
             <span className="text-sm font-semibold text-blue-600 tracking-wide">
@@ -88,7 +87,6 @@ export default function Services() {
           </p>
         </div>
 
-        {/* Services Grid */}
         <div className="grid gap-8 max-w-6xl mx-auto grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
           {services.map((service, index) => (
             <ServiceCard key={index} {...service} />

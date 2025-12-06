@@ -13,22 +13,19 @@ export default function PricingCarousel({ services }: PricingCarouselProps) {
   const [virtualIndex, setVirtualIndex] = useState(0);
   const [initialized, setInitialized] = useState(false);
 
-  const cardWidth = 320 + 24; // card + gap
+  const cardWidth = 320 + 24;
   const buffer = services.length * 2;
 
-  // Smooth scroll awal menggunakan requestAnimationFrame
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // delay supaya DOM ready
     requestAnimationFrame(() => {
       container.scrollLeft = services.length * cardWidth;
       setInitialized(true);
     });
   }, [services.length]);
 
-  // Infinite scroll + update virtualIndex
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -37,14 +34,12 @@ export default function PricingCarousel({ services }: PricingCarouselProps) {
       const scrollLeft = container.scrollLeft;
       const maxScroll = container.scrollWidth - container.offsetWidth;
 
-      // Infinite scroll logic
       if (scrollLeft < buffer * cardWidth * 0.5) {
         container.scrollLeft = scrollLeft + services.length * cardWidth;
       } else if (scrollLeft > maxScroll - buffer * cardWidth * 0.5) {
         container.scrollLeft = scrollLeft - services.length * cardWidth;
       }
 
-      // Hitung virtual index untuk scaling card
       const containerCenter = scrollLeft + container.offsetWidth / 2;
       let closestIndex = 0;
       let minDistance = Infinity;
@@ -63,14 +58,13 @@ export default function PricingCarousel({ services }: PricingCarouselProps) {
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // initial update
+    handleScroll();
 
     return () => container.removeEventListener("scroll", handleScroll);
   }, [services.length]);
 
   return (
     <div className="relative max-w-7xl mx-auto">
-      {/* Carousel */}
       <div className="overflow-hidden relative">
         <div
           ref={containerRef}
@@ -93,7 +87,6 @@ export default function PricingCarousel({ services }: PricingCarouselProps) {
         </div>
       </div>
 
-      {/* Navigation Buttons */}
       <div className="absolute inset-y-0 flex items-center justify-between w-full pointer-events-none">
         <button
           onClick={() =>

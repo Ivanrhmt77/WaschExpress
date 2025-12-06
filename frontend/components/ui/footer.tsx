@@ -69,9 +69,7 @@ export default function Footer() {
   return (
     <footer className="bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <div className="container mx-auto px-6 py-16">
-        {/* Top Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Brand */}
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2 rounded-lg bg-linear-to-br from-blue-600 to-indigo-600">
@@ -87,7 +85,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white">Navigasi</h3>
             <ul className="space-y-3">
@@ -106,7 +103,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white">Hubungi Kami</h3>
             <ul className="space-y-3">
@@ -136,7 +132,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Operating Hours */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white">
               Jam Operasional
@@ -161,16 +156,13 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="border-t border-gray-800 my-8"></div>
 
-        {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-gray-500 text-sm text-center md:text-left">
             © 2025 WaschExpress. All rights reserved.
           </p>
 
-          {/* Social Media */}
           <div className="flex items-center gap-4 flex-wrap justify-center md:justify-start">
             {SOCIAL_LINKS.map((social) => (
               <Link
@@ -186,7 +178,6 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* Additional Links */}
           <div className="flex items-center gap-6 flex-wrap justify-center md:justify-end text-sm">
             {[
               { label: "Kebijakan Privasi", href: "#" },

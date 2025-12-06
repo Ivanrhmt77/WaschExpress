@@ -10,8 +10,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface MenuItem {
   href: string;
@@ -62,7 +61,7 @@ export default function Header() {
             : "bg-transparent text-white"
         }`}
       >
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="relative container mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <Link
             href="#"
@@ -92,7 +91,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+          <nav className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-8 text-sm font-medium">
             {menuItems.map((item) => (
               <Link
                 key={item.href}

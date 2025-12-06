@@ -11,16 +11,16 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+    <footer className="bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <div className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Section */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600">
+              <div className="p-2 rounded-lg bg-linear-to-br from-blue-600 to-indigo-600">
                 <SparklesIcon className="h-6 w-6 text-white" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                 WaschExpress
               </span>
             </div>
@@ -186,7 +186,7 @@ export default function Footer() {
             <Link
               href="https://instagram.com"
               target="_blank"
-              className="p-3 rounded-full bg-gray-800 text-gray-400 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110"
+              className="p-3 rounded-full bg-gray-800 text-gray-400 hover:bg-linear-to-br hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110"
               prefetch={false}
               aria-label="Instagram"
             >

@@ -17,7 +17,7 @@ export function ServiceCard({
     <div
       className={`flex flex-col items-center text-center p-10 rounded-3xl transition-all duration-300 hover:-translate-y-3 ${
         highlighted
-          ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105"
+          ? "bg-linear-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105"
           : "bg-white shadow-xl hover:shadow-2xl"
       }`}
     >
@@ -55,7 +55,7 @@ export function ServiceCard({
         {features.map((feature, index) => (
           <div key={index} className="flex items-center gap-2 text-sm">
             <CheckCircle
-              className={`w-4 h-4 flex-shrink-0 ${
+              className={`w-4 h-4 shrink-0 ${
                 highlighted ? "text-green-300" : "text-green-500"
               }`}
             />

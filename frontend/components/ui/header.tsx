@@ -59,7 +59,7 @@ export default function Header() {
               <span
                 className={`text-xl font-bold transition-colors duration-300 ${
                   isScrolled
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+                    ? "bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
                     : "text-white"
                 }`}
               >
@@ -117,7 +117,7 @@ export default function Header() {
                 href="#track"
                 className={`hidden sm:inline-flex items-center justify-center h-10 px-6 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 ${
                   isScrolled
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
+                    ? "bg-linear-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
                     : "bg-white text-blue-600 hover:bg-blue-50"
                 }`}
                 prefetch={false}
@@ -258,7 +258,7 @@ export default function Header() {
               <Link
                 href="#track"
                 onClick={handleLinkClick}
-                className="flex items-center justify-center gap-2 w-full h-12 px-6 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                className="flex items-center justify-center gap-2 w-full h-12 px-6 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 prefetch={false}
               >
                 <SparklesIcon className="w-5 h-5" />

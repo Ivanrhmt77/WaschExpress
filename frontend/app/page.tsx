@@ -16,7 +16,7 @@ export default function Home() {
     <main className="flex-1">
       {/* Hero Section - Enhanced */}
       <section className="relative min-h-screen flex flex-col justify-center items-center text-center p-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 z-0"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 z-0"></div>
 
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden z-10">
@@ -36,7 +36,7 @@ export default function Home() {
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 animate-fade-in">
             Laundry Cepat, Bersih,
-            <span className="block bg-gradient-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent">
+            <span className="block bg-linear-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent">
               dan Modern
             </span>
           </h1>
@@ -98,7 +98,7 @@ export default function Home() {
       {/* Services Section - Enhanced */}
       <section
         id="services"
-        className="py-24 md:py-32 bg-gradient-to-b from-gray-50 to-white"
+        className="py-24 md:py-32 bg-linear-to-b from-gray-50 to-white"
       >
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -155,7 +155,7 @@ export default function Home() {
       {/* Pricing Section - Enhanced */}
       <section
         id="pricing"
-        className="py-24 md:py-32 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
+        className="py-24 md:py-32 bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50"
       >
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -174,10 +174,10 @@ export default function Home() {
 
           <div className="mt-16 max-w-md mx-auto">
             <div className="bg-white rounded-3xl shadow-2xl p-12 border-2 border-blue-100 transform hover:scale-105 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full -mr-16 -mt-16 opacity-10"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-400 to-indigo-500 rounded-full -mr-16 -mt-16 opacity-10"></div>
 
               <div className="relative">
-                <div className="inline-block px-4 py-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm font-bold rounded-full mb-4">
+                <div className="inline-block px-4 py-1 bg-linear-to-r from-blue-500 to-indigo-500 text-white text-sm font-bold rounded-full mb-4">
                   PAKET POPULER
                 </div>
 
@@ -186,7 +186,7 @@ export default function Home() {
                 </h3>
 
                 <div className="my-6 flex items-end justify-center">
-                  <span className="text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="text-7xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     Rp 8.000
                   </span>
                   <span className="text-2xl font-normal text-gray-500 mb-2">
@@ -201,28 +201,28 @@ export default function Home() {
 
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                     <span className="text-gray-700">
                       Deterjen premium gratis
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                     <span className="text-gray-700">Pewangi pilihan</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                     <span className="text-gray-700">Tracking real-time</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                     <span className="text-gray-700">Garansi uang kembali</span>
                   </div>
                 </div>
 
                 <Link
                   href="#contact"
-                  className="block w-full h-14 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center group"
+                  className="block w-full h-14 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 text-white font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 items-center justify-center group"
                   prefetch={false}
                 >
                   Pesan Sekarang
@@ -265,7 +265,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 md:p-12 shadow-xl">
+            <div className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 md:p-12 shadow-xl">
               <div className="flex flex-col sm:flex-row gap-4">
                 <Input
                   type="text"
@@ -274,7 +274,7 @@ export default function Home() {
                 />
                 <Button
                   size="lg"
-                  className="h-16 px-10 rounded-xl font-bold text-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="h-16 px-10 rounded-xl font-bold text-lg bg-linear-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   Lacak Sekarang
                 </Button>
@@ -302,7 +302,7 @@ export default function Home() {
       {/* Contact Section - Enhanced */}
       <section
         id="contact"
-        className="py-24 md:py-32 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden"
+        className="py-24 md:py-32 bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden"
       >
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>

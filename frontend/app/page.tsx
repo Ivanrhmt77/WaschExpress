@@ -25,7 +25,7 @@ export default function Home() {
           <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
-        <div className="absolute inset-0 opacity-10 bg-[url('/grid.svg')] bg-repeat z-10"></div>
+        <div className="absolute inset-0 opacity-10 bg-[url('/grid.svg')] bg-cover bg-center z-10"></div>
 
         <div className="container mx-auto relative z-20 text-white">
           <div className="inline-block mb-4 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">

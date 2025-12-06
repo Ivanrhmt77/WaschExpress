@@ -33,9 +33,9 @@ import { placeholderImages } from "@/lib/placeholder-images";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/buat-order", label: "Buat Order Baru", icon: PlusCircle },
-  { href: "/riwayat-order", label: "Riwayat Order", icon: History },
-  { href: "/database-customer", label: "Database Customer", icon: Users },
+  { href: "/admin/create-order", label: "Buat Order Baru", icon: PlusCircle },
+  { href: "/admin/order-history", label: "Riwayat Order", icon: History },
+  { href: "/admin/customer-database", label: "Database Customer", icon: Users },
 ];
 
 export function AdminSidebar() {
@@ -62,7 +62,7 @@ export function AdminSidebar() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} passHref legacyBehavior>
+              <Link href={item.href}>
                 <SidebarMenuButton
                   isActive={pathname === item.href}
                   tooltip={item.label}

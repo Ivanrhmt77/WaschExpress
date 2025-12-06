@@ -8,6 +8,11 @@ import {
   CheckCircle,
   Clock,
   Shield,
+  ArrowRight,
+  Zap,
+  ClockCheck,
+  LocateFixed,
+  Truck,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -30,20 +35,21 @@ export default function Home() {
         <div className="container mx-auto relative z-20 text-white">
           <div className="inline-block mb-4 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
             <span className="text-sm font-semibold">
-              ✨ Laundry Masa Depan Ada Di Sini
+              ✨ Cepat, Mudah, Terjangkau
             </span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 animate-fade-in">
-            Laundry Cepat, Bersih,
+            Laundry cepat & akurat
             <span className="block bg-linear-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent">
-              dan Modern
+              dalam pemantauan
             </span>
           </h1>
 
           <p className="mt-6 text-xl md:text-2xl max-w-3xl mx-auto text-blue-50 leading-relaxed">
-            WaschExpress adalah solusi laundry masa kini. Nikmati kemudahan
-            melacak pesanan Anda secara real-time dengan teknologi AI.
+            Dengan WaschExpress, Anda bisa melacak proses laundry secara
+            real-time. Pengerjaan yang cepat, transparan, dan tetap ramah di
+            kantong tanpa perlu menunggu kepastian.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -53,19 +59,7 @@ export default function Home() {
               prefetch={false}
             >
               Cek Status Laundry
-              <svg
-                className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
-              </svg>
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
 
             <Link
@@ -80,16 +74,22 @@ export default function Home() {
           {/* Trust Indicators */}
           <div className="mt-16 flex flex-wrap justify-center gap-8 text-white/90">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-300" />
-              <span className="text-sm font-medium">10,000+ Pelanggan</span>
+              <Zap className="w-5 h-5 text-yellow-300" />
+              <span className="text-sm font-medium">Express 1–3 Jam</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-yellow-300" />
-              <span className="text-sm font-medium">24 Jam Service</span>
+              <ClockCheck className="w-5 h-5 text-green-300" />
+              <span className="text-sm font-medium">On-Time Guarantee</span>
             </div>
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-blue-300" />
-              <span className="text-sm font-medium">Garansi Kualitas</span>
+              <LocateFixed className="w-5 h-5 text-blue-300" />
+              <span className="text-sm font-medium">Real-Time Tracking</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Truck className="w-5 h-5 text-purple-300" />
+              <span className="text-sm font-medium">
+                Pickup & Delivery Cepat
+              </span>
             </div>
           </div>
         </div>

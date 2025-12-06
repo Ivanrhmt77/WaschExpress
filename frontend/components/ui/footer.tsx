@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Facebook,
@@ -6,19 +8,74 @@ import {
   Mail,
   Phone,
   MapPin,
-  SparklesIcon,
+  Shirt,
 } from "lucide-react";
+
+const QUICK_LINKS = [
+  { href: "#services", label: "Layanan Kami" },
+  { href: "#pricing", label: "Harga" },
+  { href: "#track", label: "Tracking" },
+  { href: "#contact", label: "Kontak" },
+];
+
+const CONTACT_INFO = [
+  {
+    type: "phone",
+    href: "tel:+6283187144476",
+    label: "+62 831-8714-4476",
+    icon: <Phone className="h-4 w-4" />,
+  },
+  {
+    type: "email",
+    href: "mailto:waschExpress@gmail.com",
+    label: "waschExpress@gmail.com",
+    icon: <Mail className="h-4 w-4" />,
+  },
+  {
+    type: "address",
+    href: "https://maps.app.goo.gl/vsYcuafkENvH9fee8",
+    label: "Jl. Raya ITS, Keputih, Sukolilo\nSurabaya, Jawa Timur",
+    icon: <MapPin className="h-4 w-4" />,
+  },
+];
+
+const SOCIAL_LINKS = [
+  {
+    href: "https://facebook.com",
+    icon: <Facebook className="h-5 w-5" />,
+    label: "Facebook",
+    bgHover: "hover:bg-blue-600",
+  },
+  {
+    href: "https://twitter.com",
+    icon: <Twitter className="h-5 w-5" />,
+    label: "Twitter",
+    bgHover: "hover:bg-blue-400",
+  },
+  {
+    href: "https://instagram.com",
+    icon: <Instagram className="h-5 w-5" />,
+    label: "Instagram",
+    bgHover: "hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-600",
+  },
+];
+
+const CONTACT_ITEM_CLASS =
+  "text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-3 group";
+const ICON_BOX_CLASS =
+  "p-2 rounded-lg bg-gray-800 group-hover:bg-blue-600 transition-colors group-hover:text-white";
 
 export default function Footer() {
   return (
     <footer className="bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          {/* Brand Section */}
-          <div className="md:col-span-1">
+        {/* Top Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          {/* Brand */}
+          <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2 rounded-lg bg-linear-to-br from-blue-600 to-indigo-600">
-                <SparklesIcon className="h-6 w-6 text-white" />
+                <Shirt className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                 WaschExpress
@@ -34,46 +91,18 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4 text-white">Navigasi</h3>
             <ul className="space-y-3">
-              <li>
-                <Link
-                  href="#services"
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
-                  prefetch={false}
-                >
-                  <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Layanan Kami
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#pricing"
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
-                  prefetch={false}
-                >
-                  <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Harga
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#track"
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
-                  prefetch={false}
-                >
-                  <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Tracking
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#contact"
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
-                  prefetch={false}
-                >
-                  <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Kontak
-                </Link>
-              </li>
+              {QUICK_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    prefetch={false}
+                    className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -81,40 +110,29 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4 text-white">Hubungi Kami</h3>
             <ul className="space-y-3">
-              <li>
-                <a
-                  href="tel:+6281234567890"
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-3 group"
-                >
-                  <div className="p-2 rounded-lg bg-gray-800 group-hover:bg-blue-600 transition-colors">
-                    <Phone className="h-4 w-4" />
-                  </div>
-                  <span>+62 812-3456-7890</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:info@waschexpress.com"
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-3 group"
-                >
-                  <div className="p-2 rounded-lg bg-gray-800 group-hover:bg-blue-600 transition-colors">
-                    <Mail className="h-4 w-4" />
-                  </div>
-                  <span>info@waschexpress.com</span>
-                </a>
-              </li>
-              <li>
-                <div className="text-gray-400 text-sm flex items-start gap-3 group">
-                  <div className="p-2 rounded-lg bg-gray-800 group-hover:bg-blue-600 transition-colors mt-0.5">
-                    <MapPin className="h-4 w-4" />
-                  </div>
-                  <span>
-                    Jl. Contoh No. 123
-                    <br />
-                    Surabaya, Jawa Timur
-                  </span>
-                </div>
-              </li>
+              {CONTACT_INFO.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    target={item.type === "address" ? "_blank" : undefined}
+                    rel={
+                      item.type === "address"
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    className={CONTACT_ITEM_CLASS}
+                  >
+                    <div className={ICON_BOX_CLASS}>{item.icon}</div>
+                    <span
+                      className={
+                        item.type === "address" ? "whitespace-pre-line" : ""
+                      }
+                    >
+                      {item.label}
+                    </span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -124,31 +142,21 @@ export default function Footer() {
               Jam Operasional
             </h3>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between text-gray-400">
-                <span>Senin - Jumat</span>
-                <span className="text-blue-400 font-semibold">
-                  08:00 - 20:00
-                </span>
-              </div>
-              <div className="flex justify-between text-gray-400">
-                <span>Sabtu</span>
-                <span className="text-blue-400 font-semibold">
-                  08:00 - 18:00
-                </span>
-              </div>
-              <div className="flex justify-between text-gray-400">
-                <span>Minggu</span>
-                <span className="text-blue-400 font-semibold">
-                  10:00 - 16:00
-                </span>
-              </div>
+              {[
+                { day: "Senin - Jumat", time: "08:00 - 20:00" },
+                { day: "Sabtu", time: "08:00 - 18:00" },
+                { day: "Minggu", time: "10:00 - 16:00" },
+              ].map(({ day, time }) => (
+                <div key={day} className="flex justify-between text-gray-400">
+                  <span>{day}</span>
+                  <span className="text-blue-400 font-semibold">{time}</span>
+                </div>
+              ))}
             </div>
-            <div className="mt-4 p-3 bg-blue-600/10 border border-blue-600/20 rounded-lg">
-              <p className="text-xs text-blue-400">
-                <span className="font-semibold">24/7 Emergency Service</span>
-                <br />
-                <span className="text-gray-400">Untuk kebutuhan mendesak</span>
-              </p>
+            <div className="mt-4 p-3 bg-blue-600/10 border border-blue-600/20 rounded-lg text-xs text-blue-400">
+              <span className="font-semibold">24/7 Emergency Service</span>
+              <br />
+              <span className="text-gray-400">Untuk kebutuhan mendesak</span>
             </div>
           </div>
         </div>
@@ -158,58 +166,41 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Copyright */}
           <p className="text-gray-500 text-sm text-center md:text-left">
-            © 2024 WaschExpress. All rights reserved.
+            © 2025 WaschExpress. All rights reserved.
           </p>
 
           {/* Social Media */}
-          <div className="flex items-center gap-4">
-            <Link
-              href="https://facebook.com"
-              target="_blank"
-              className="p-3 rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-110"
-              prefetch={false}
-              aria-label="Facebook"
-            >
-              <Facebook className="h-5 w-5" />
-            </Link>
-            <Link
-              href="https://twitter.com"
-              target="_blank"
-              className="p-3 rounded-full bg-gray-800 text-gray-400 hover:bg-blue-400 hover:text-white transition-all duration-300 transform hover:scale-110"
-              prefetch={false}
-              aria-label="Twitter"
-            >
-              <Twitter className="h-5 w-5" />
-            </Link>
-            <Link
-              href="https://instagram.com"
-              target="_blank"
-              className="p-3 rounded-full bg-gray-800 text-gray-400 hover:bg-linear-to-br hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110"
-              prefetch={false}
-              aria-label="Instagram"
-            >
-              <Instagram className="h-5 w-5" />
-            </Link>
+          <div className="flex items-center gap-4 flex-wrap justify-center md:justify-start">
+            {SOCIAL_LINKS.map((social) => (
+              <Link
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                aria-label={social.label}
+                prefetch={false}
+                className={`p-3 rounded-full bg-gray-800 text-gray-400 transition-all duration-300 transform hover:scale-110 ${social.bgHover} hover:text-white`}
+              >
+                {social.icon}
+              </Link>
+            ))}
           </div>
 
           {/* Additional Links */}
-          <div className="flex items-center gap-6 text-sm">
-            <Link
-              href="#"
-              className="text-gray-500 hover:text-blue-400 transition-colors"
-              prefetch={false}
-            >
-              Kebijakan Privasi
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-500 hover:text-blue-400 transition-colors"
-              prefetch={false}
-            >
-              Syarat & Ketentuan
-            </Link>
+          <div className="flex items-center gap-6 flex-wrap justify-center md:justify-end text-sm">
+            {[
+              { label: "Kebijakan Privasi", href: "#" },
+              { label: "Syarat & Ketentuan", href: "#" },
+            ].map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-gray-500 hover:text-blue-400 transition-colors"
+                prefetch={false}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

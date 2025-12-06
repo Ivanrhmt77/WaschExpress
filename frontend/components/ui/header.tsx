@@ -7,6 +7,7 @@ import {
   DollarSign,
   UserRound,
   Clock,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -188,8 +189,8 @@ export default function Header() {
                 className="flex items-center justify-center gap-2 w-full h-12 px-6 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 prefetch={false}
               >
-                <Shirt className="w-5 h-5" />
                 Cek Status Laundry
+                <ArrowRight className="ml-2 w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </nav>

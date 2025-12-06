@@ -1,13 +1,45 @@
 # WaschExpress backend
 
-Minimal Express server exposing:
-- `GET /health` — liveness check
-- `GET /queue` — sample queue data (mock)
-- `POST /predict` — echoes a simple total using `processing_slot_min + wait_min + 100`
+Express + Supabase integration for the WaschExpress frontend. Requires environment variables (no hardcoding):
 
-## Scripts
-- `npm install`
-- `npm run dev` (with nodemon)
-- `npm start`
+```
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+PORT=4001
+```
 
-Port defaults to `4001` (override with `PORT`).
+Install & run:
+
+```bash
+cd backend
+npm install
+npm run dev   # nodemon
+# or
+npm start
+```
+
+## API
+
+- `GET /health` — liveness
+- `GET /api/queue` — uses service role to read `current_queue`; returns `id, kilos, service_type, remaining_minutes, priority, created_at`.
+- `POST /api/predict` — accepts model-ready features and returns `{ total_time_min }`. Replace the placeholder model call in `routes/predict.js` with real TF.js/SavedModel inference.
+- `POST /api/submitJob` — requires `Authorization: Bearer <access_token>`; body `{ kilos: number, service_type: "regular"|"express" }`; inserts into `jobs` honoring RLS.
+- `GET /api/weather` — latest weather log entry.
+
+## Files
+- `supabaseClient.js` — exports `supabaseClient` (anon) and `supabaseAdmin` (service role).
+- `routes/*.js` — queue, predict, submitJob, weather endpoints.
+- `utils/featureBuilder.js` — shared feature helpers.
+- `tests/featureBuilder.test.js` — Jest coverage for feature helpers.
+
+## Tests
+
+```bash
+npm test
+```
+
+## Notes
+- Never commit Supabase keys; use `.env` locally and secrets in production.
+- `submitJob` expects caller to send a Supabase access token; RLS policies in `schema.sql` enforce access.
+- Swap the placeholder prediction logic with your actual TensorFlow.js or SavedModel runner.

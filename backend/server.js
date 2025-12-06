@@ -1,5 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+
+const queueRouter = require("./routes/queue");
+const predictRouter = require("./routes/predict");
+const submitJobRouter = require("./routes/submitJob");
+const weatherRouter = require("./routes/weather");
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4001;
 const app = express();
@@ -7,27 +13,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const sampleQueue = [
-  { kilos: 15, remaining_minutes: 40 },
-  { kilos: 12 },
-  { kilos: 9, remaining_minutes: 0 },
-  { kilos: 20 },
-];
-
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.get("/queue", (_req, res) => {
-  res.json(sampleQueue);
-});
+app.use("/api/queue", queueRouter);
+app.use("/api/predict", predictRouter);
+app.use("/api/submitJob", submitJobRouter);
+app.use("/api/weather", weatherRouter);
 
-app.post("/predict", (req, res) => {
-  const { processing_slot_min = 0, wait_min = 0 } = req.body || {};
-  const processing = Number(processing_slot_min) || 0;
-  const wait = Number(wait_min) || 0;
-  const total_time_min = Math.round(processing + wait + 100);
-  res.json({ total_time_min });
+app.use((err, _req, res, _next) => {
+  // Fallback error handler
+  console.error(err);
+  res.status(500).json({ error: "Internal server error" });
 });
 
 app.listen(PORT, () => {

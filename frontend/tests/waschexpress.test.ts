@@ -3,8 +3,8 @@ import {
   computeWaitFromAggregates,
   computeWaitFromQueueArray,
   processingSlotFromKilos,
-} from "../src/utils/waschexpress";
-import { predictWithModel } from "../src/api/predict";
+} from "../../backend/src/utils/waschexpress";
+import { predictWithModel } from "../../backend/src/api/predict";
 
 describe("processingSlotFromKilos", () => {
   it("maps minimum kilos to 60", () => {

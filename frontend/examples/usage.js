@@ -1,5 +1,5 @@
-import { buildModelFeatures } from "../src/utils/waschexpress.js";
-import { predictWithModel } from "../src/api/predict.js";
+import { buildModelFeatures } from "../../backend/src/utils/waschexpress.js";
+import { predictWithModel } from "../../backend/src/api/predict.js";
 
 const API_BASE = "http://localhost:4001";
 

@@ -1,5 +1,5 @@
-import { buildModelFeatures, type ServiceType } from "../src/utils/waschexpress";
-import { predictWithModel } from "../src/api/predict";
+import { buildModelFeatures, type ServiceType } from "../../backend/src/utils/waschexpress";
+import { predictWithModel } from "../../backend/src/api/predict";
 
 const API_BASE = "http://localhost:4001";
 

@@ -65,6 +65,7 @@ const serviceIcons: { [key: string]: React.ElementType } = {
 type NewOrderFormProps = {
   customers: Customer[];
   services: Service[];
+  pendingOrders?: Order[];
 };
 
 type SelectedService = {
@@ -81,12 +82,15 @@ type AiResult = {
 export function NewOrderForm({
   customers: initialCustomers,
   services,
+  pendingOrders = [],
 }: NewOrderFormProps) {
   const [customers, setCustomers] = useState(initialCustomers);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null
   );
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [openCustomerPopover, setOpenCustomerPopover] = useState(false);
+  const [openOrderPopover, setOpenOrderPopover] = useState(false);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>(
     []
@@ -103,6 +107,36 @@ export function NewOrderForm({
       } else {
         return [...prev, { service, quantity: 1 }];
       }
+    });
+  };
+
+  const handleSelectOrder = (order: Order) => {
+    setSelectedOrderId(order.id);
+    setOpenOrderPopover(false);
+
+    // Find and set customer
+    const customer = customers.find((c) => c.id === order.customerId);
+    if (customer) {
+      setSelectedCustomer(customer);
+    }
+
+    // Map items to selectedServices
+    const mappedServices = order.items
+      .map((item) => {
+        const service = services.find((s) => s.id === item.serviceId);
+        if (!service) return null;
+        return {
+          service,
+          quantity: item.quantity || 0,
+        };
+      })
+      .filter((s): s is SelectedService => s !== null);
+
+    setSelectedServices(mappedServices);
+
+    toast({
+      title: "Order Dipilih",
+      description: `Memproses order #${order.id} dari ${order.customerName}`,
     });
   };
 
@@ -205,13 +239,24 @@ export function NewOrderForm({
       });
       return;
     }
-    // Logic to submit order
-    toast({
-      title: "Order Dibuat!",
-      description: `Order untuk ${selectedCustomer.name} berhasil dibuat.`,
-    });
+    
+    if (selectedOrderId) {
+      // Logic to update order
+      toast({
+        title: "Order Diupdate!",
+        description: `Order #${selectedOrderId} berhasil diperbarui dengan berat/jumlah baru.`,
+      });
+    } else {
+      // Logic to create new order
+      toast({
+        title: "Order Dibuat!",
+        description: `Order untuk ${selectedCustomer.name} berhasil dibuat.`,
+      });
+    }
+
     setSelectedCustomer(null);
     setSelectedServices([]);
+    setSelectedOrderId(null);
   };
 
   const formatCurrency = (amount: number) =>
@@ -250,59 +295,71 @@ export function NewOrderForm({
     <>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          {/* Section 1: Customer */}
-          <Card>
-            <CardHeader>
-              <CardTitle>1. Informasi Pelanggan</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center gap-4">
-              <Popover
-                open={openCustomerPopover}
-                onOpenChange={setOpenCustomerPopover}
-              >
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className="w-[300px] justify-between"
-                  >
-                    {selectedCustomer
-                      ? selectedCustomer.name
-                      : "Pilih pelanggan..."}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0">
-                  <Command>
-                    <CommandInput placeholder="Cari pelanggan..." />
-                    <CommandList>
-                      <CommandEmpty>Pelanggan tidak ditemukan.</CommandEmpty>
-                      <CommandGroup>
-                        {customers.map((customer) => (
-                          <CommandItem
-                            key={customer.id}
-                            onSelect={() => {
-                              setSelectedCustomer(customer);
-                              setOpenCustomerPopover(false);
-                            }}
-                          >
-                            {customer.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setIsCustomerModalOpen(true)}
-              >
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Tambah Cepat
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Section 0: Pending Orders */}
+          {pendingOrders && pendingOrders.length > 0 && (
+            <Card className="border-blue-500 border-2 bg-blue-50/50 dark:bg-blue-950/20">
+              <CardHeader>
+                <CardTitle className="text-blue-600 dark:text-blue-400">
+                  Proses Order Masuk ({pendingOrders.length})
+                </CardTitle>
+                <CardDescription>
+                  Pilih order dari pelanggan yang belum diproses untuk mengisi berat.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Popover
+                  open={openOrderPopover}
+                  onOpenChange={setOpenOrderPopover}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between"
+                    >
+                      {selectedOrderId
+                        ? `Order #${selectedOrderId} - ${
+                            pendingOrders.find((o) => o.id === selectedOrderId)
+                              ?.customerName
+                          }`
+                        : "Pilih order masuk..."}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[400px] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Cari order..." />
+                      <CommandList>
+                        <CommandEmpty>Tidak ada order pending.</CommandEmpty>
+                        <CommandGroup>
+                          {pendingOrders.map((order) => (
+                            <CommandItem
+                              key={order.id}
+                              onSelect={() => handleSelectOrder(order)}
+                              className="cursor-pointer"
+                            >
+                              <div className="flex flex-col w-full">
+                                <div className="flex justify-between items-center">
+                                  <span className="font-bold">
+                                    {order.customerName}
+                                  </span>
+                                  <Badge variant="outline">{order.id}</Badge>
+                                </div>
+                                <span className="text-xs text-muted-foreground mt-1">
+                                  {order.items
+                                    .map((i) => i.serviceName)
+                                    .join(", ")}
+                                </span>
+                              </div>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Section 2: Services */}
           <Card>
@@ -375,11 +432,12 @@ export function NewOrderForm({
                         onChange={(e) =>
                           handleQuantityChange(
                             service.id,
-                            parseInt(e.target.value) || 0
+                            parseFloat(e.target.value) || 0
                           )
                         }
                         className="flex-1"
-                        min="1"
+                        min="0.1"
+                        step="0.1"
                       />
                       <span className="text-sm text-muted-foreground w-16 text-right">
                         x {formatCurrency(service.price)}
@@ -447,7 +505,7 @@ export function NewOrderForm({
                 size="lg"
                 disabled={!selectedCustomer || selectedServices.length === 0}
               >
-                Buat Order
+                {selectedOrderId ? "Update Order & Proses" : "Buat Order"}
               </Button>
             </CardContent>
           </Card>

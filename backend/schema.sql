@@ -1,5 +1,5 @@
 -- ============================================
--- Minimal WaschExpress schema (no machines, no weather table)
+-- Minimal WaschExpress schema 
 -- ============================================
 
 create extension if not exists "uuid-ossp";
@@ -134,17 +134,6 @@ where status in ('queued','processing');
 alter table customers enable row level security;
 alter table jobs enable row level security;
 alter table predictions enable row level security;
-
--- Clean up old policies if they exist (safe to ignore errors)
-drop policy if exists "customer_select_own" on customers;
-drop policy if exists "customer_update_own" on customers;
-drop policy if exists "staff_insert_customer" on customers;
-drop policy if exists "customer_insert_own_job" on jobs;
-drop policy if exists "customer_select_own_jobs" on jobs;
-drop policy if exists "customer_update_own_jobs" on jobs;
-drop policy if exists "staff_all_jobs" on jobs;
-drop policy if exists "staff_all_predictions" on predictions;
-drop policy if exists "service_insert_predictions" on predictions;
 
 -- -------------------------
 -- Customers RLS (minimal)

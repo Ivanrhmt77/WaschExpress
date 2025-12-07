@@ -38,8 +38,3 @@ npm start
 ```bash
 npm test
 ```
-
-## Notes
-- Never commit Supabase keys; use `.env` locally and secrets in production.
-- `submitJob` expects caller to send a Supabase access token; RLS policies in `schema.sql` enforce access.
-- Swap the placeholder prediction logic with your actual TensorFlow.js or SavedModel runner.

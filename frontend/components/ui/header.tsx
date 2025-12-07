@@ -69,7 +69,9 @@ export default function Header() {
           >
             <div
               className={`p-2 rounded-lg transition-all duration-300 ${
-                isScrolled ? "bg-blue-600" : "bg-white"
+                isScrolled
+                  ? "bg-linear-to-br from-blue-600 via-indigo-600 to-purple-600 shadow-lg"
+                  : "bg-white"
               }`}
             >
               <Shirt
@@ -81,7 +83,7 @@ export default function Header() {
             <span
               className={`text-xl font-bold transition-colors duration-300 ${
                 isScrolled
-                  ? "bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+                  ? "bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
                   : "text-white"
               }`}
             >

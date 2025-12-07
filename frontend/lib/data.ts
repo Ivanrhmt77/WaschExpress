@@ -85,14 +85,6 @@ export const mockServices: Service[] = [
     type: "regular",
     icon: "Droplet",
   },
-  {
-    id: "SVC-006",
-    name: "Antar Jemput",
-    price: 5000,
-    unit: "trip",
-    type: "regular",
-    icon: "Truck",
-  },
 ];
 
 const now = new Date();

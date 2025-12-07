@@ -1,6 +1,5 @@
 import { NewOrderForm } from "@/components/order/new-order-form";
 import { PageHeader } from "@/components/shared/page-header";
-import { mockServices } from "@/lib/data";
 
 async function getCustomers() {
   try {
@@ -40,7 +39,8 @@ export default async function CreateOrderPage() {
       />
       <NewOrderForm
         customers={customers}
-        services={mockServices}
+        // Admin page is for processing existing orders; no service selection
+        services={[]}
         pendingOrders={pendingOrders}
       />
     </div>

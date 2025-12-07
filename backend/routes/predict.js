@@ -50,6 +50,82 @@ function runLocalPrediction(features) {
 }
 
 /**
+ * Get operational hours for a specific date.
+ * Senin - Jumat = 08:00 - 20:00
+ * Sabtu = 08:00 - 18:00
+ * Minggu = 10:00 - 16:00
+ */
+function getOperationalHours(date) {
+  const day = date.getDay(); // 0 = Sunday, 1 = Monday, ...
+  let openHour, closeHour;
+
+  if (day === 0) { // Sunday
+    openHour = 10;
+    closeHour = 16;
+  } else if (day === 6) { // Saturday
+    openHour = 8;
+    closeHour = 18;
+  } else { // Mon-Fri
+    openHour = 8;
+    closeHour = 20;
+  }
+
+  const openTime = new Date(date);
+  openTime.setHours(openHour, 0, 0, 0);
+
+  const closeTime = new Date(date);
+  closeTime.setHours(closeHour, 0, 0, 0);
+
+  return { openTime, closeTime };
+}
+
+/**
+ * Calculate completion time respecting operational hours.
+ * @param {Date} startTime 
+ * @param {number} durationMinutes 
+ * @returns {Date}
+ */
+function calculateCompletionTime(startTime, durationMinutes) {
+  let currentTime = new Date(startTime);
+  let remainingMinutes = durationMinutes;
+  let iterations = 0;
+  const MAX_ITERATIONS = 100; // Safety break
+
+  while (remainingMinutes > 0 && iterations < MAX_ITERATIONS) {
+    iterations++;
+    const { openTime, closeTime } = getOperationalHours(currentTime);
+
+    // If current time is before opening, jump to opening
+    if (currentTime < openTime) {
+      currentTime = new Date(openTime);
+    }
+
+    // If current time is after closing, jump to next day 00:00
+    if (currentTime >= closeTime) {
+      currentTime.setDate(currentTime.getDate() + 1);
+      currentTime.setHours(0, 0, 0, 0);
+      continue;
+    }
+
+    // Calculate time available today
+    const timeUntilClose = (closeTime - currentTime) / 60000; // ms to minutes
+
+    if (timeUntilClose >= remainingMinutes) {
+      // Can finish today
+      currentTime = new Date(currentTime.getTime() + remainingMinutes * 60000);
+      remainingMinutes = 0;
+    } else {
+      // Finish what we can today, then move to next day
+      remainingMinutes -= timeUntilClose;
+      currentTime.setDate(currentTime.getDate() + 1);
+      currentTime.setHours(0, 0, 0, 0);
+    }
+  }
+  
+  return currentTime;
+}
+
+/**
  * POST /api/predict
  * Body: { kilos, service_type } (optional: processing_slot_min, wait_min)
  */
@@ -83,9 +159,9 @@ router.post("/", async (req, res) => {
 
     const total_time_min = runLocalPrediction({ processing_slot_min, wait_min, weather });
     
-    // Calculate estimated completion time
+    // Calculate estimated completion time respecting operational hours
     const now = new Date();
-    const completionTime = new Date(now.getTime() + total_time_min * 60000);
+    const completionTime = calculateCompletionTime(now, total_time_min);
 
     return res.json({ 
       total_time_min,

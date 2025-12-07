@@ -6,6 +6,8 @@ const queueRouter = require("./routes/queue");
 const predictRouter = require("./routes/predict");
 const submitJobRouter = require("./routes/submitJob");
 const weatherRouter = require("./routes/weather");
+const customersRouter = require("./routes/customers");
+const jobsRouter = require("./routes/jobs");
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4001;
 const app = express();
@@ -21,6 +23,8 @@ app.use("/api/queue", queueRouter);
 app.use("/api/predict", predictRouter);
 app.use("/api/submitJob", submitJobRouter);
 app.use("/api/weather", weatherRouter);
+app.use("/api/customers", customersRouter);
+app.use("/api/jobs", jobsRouter);
 
 app.use((err, _req, res, _next) => {
   // Fallback error handler

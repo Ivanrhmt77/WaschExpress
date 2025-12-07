@@ -98,7 +98,42 @@ export function NewOrderForm({
   const [aiResult, setAiResult] = useState<AiResult | null>(null);
   const { toast } = useToast();
 
+  const isEditingExisting = Boolean(selectedOrderId);
+
+  // Resolve a service from an order item even when backend IDs/names differ from mock services
+  const resolveServiceFromOrderItem = (
+    item: Order["items"][number],
+    order: Order
+  ): Service => {
+    const byId = services.find((s) => s.id === item.serviceId);
+    if (byId) return byId;
+
+    const byName = services.find(
+      (s) =>
+        item.serviceName &&
+        s.name.toLowerCase() === item.serviceName.toLowerCase()
+    );
+    if (byName) return byName;
+
+    const byType = services.find(
+      (s) => s.type === (order.isExpress ? "express" : "regular")
+    );
+    if (byType) return byType;
+
+    // Fallback synthetic service to display locked choice
+    return {
+      id: item.serviceId || `UNKNOWN-${order.id}`,
+      name: item.serviceName || (order.isExpress ? "Express" : "Regular"),
+      price: item.price || 0,
+      unit: item.unit || "kg",
+      type: order.isExpress ? "express" : "regular",
+      icon: order.isExpress ? "Timer" : "WashingMachine",
+    };
+  };
+
   const handleSelectService = (service: Service) => {
+    if (isEditingExisting) return; // lock service type for existing orders
+
     setSelectedServices((prev) => {
       const isSelected = prev.some((s) => s.service.id === service.id);
       if (isSelected) {
@@ -120,16 +155,13 @@ export function NewOrderForm({
     }
 
     // Map items to selectedServices
-    const mappedServices = order.items
-      .map((item) => {
-        const service = services.find((s) => s.id === item.serviceId);
-        if (!service) return null;
-        return {
-          service,
-          quantity: item.quantity || 0,
-        };
-      })
-      .filter((s): s is SelectedService => s !== null);
+    const mappedServices = order.items.map((item) => {
+      const service = resolveServiceFromOrderItem(item, order);
+      return {
+        service,
+        quantity: item.quantity ?? 0,
+      };
+    });
 
     setSelectedServices(mappedServices);
 
@@ -216,25 +248,36 @@ export function NewOrderForm({
     return () => clearTimeout(timer);
   }, [selectedServices, toast]);
 
-  const handleSaveCustomer = (
+  const handleSaveCustomer = async (
     customerData: Omit<Customer, "id" | "totalOrders" | "createdAt">
   ) => {
-    const newCustomer: Customer = {
-      ...customerData,
-      id: `CUST-${String(customers.length + 1).padStart(3, "0")}`,
-      totalOrders: 0,
-      createdAt: new Date(),
-    };
-    setCustomers([newCustomer, ...customers]);
-    setSelectedCustomer(newCustomer);
-    setIsCustomerModalOpen(false);
-    toast({
-      title: "Sukses",
-      description: "Customer baru berhasil ditambahkan.",
-    });
+    try {
+      const response = await fetch("http://localhost:4001/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customerData),
+      });
+
+      if (!response.ok) throw new Error("Failed to create customer");
+
+      const newCustomer = await response.json();
+      setCustomers([newCustomer, ...customers]);
+      setSelectedCustomer(newCustomer);
+      setIsCustomerModalOpen(false);
+      toast({
+        title: "Sukses",
+        description: "Customer baru berhasil ditambahkan.",
+      });
+    } catch (error) {
+      toast({
+        title: "Gagal",
+        description: "Gagal menambahkan customer baru.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     if (!selectedCustomer) {
       toast({
         title: "Gagal",
@@ -251,24 +294,98 @@ export function NewOrderForm({
       });
       return;
     }
-    
-    if (selectedOrderId) {
-      // Logic to update order
+    // Ensure there's a service and quantity
+    const serviceToUpdate = selectedServices[0];
+    if (!serviceToUpdate || serviceToUpdate.quantity <= 0) {
       toast({
-        title: "Order Diupdate!",
-        description: `Order #${selectedOrderId} berhasil diperbarui dengan berat/jumlah baru.`,
+        title: "Gagal",
+        description: "Berat harus lebih dari 0.",
+        variant: "destructive",
       });
-    } else {
-      // Logic to create new order
+      return;
+    }
+    const serviceType = serviceToUpdate.service.type;
+
+    try {
+      const payload = {
+        customerId: selectedCustomer.id,
+        service_type: serviceType,
+        kilos: serviceToUpdate.quantity,
+        status: "Dicuci", // Move to processing immediately
+      };
+
+      let response;
+      if (selectedOrderId) {
+        // Update existing job
+        response = await fetch(`http://localhost:4001/api/jobs/${selectedOrderId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        // Create new job
+        response = await fetch("http://localhost:4001/api/jobs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      if (!response.ok) throw new Error("Failed to submit order");
+
       toast({
-        title: "Order Dibuat!",
-        description: `Order untuk ${selectedCustomer.name} berhasil dibuat.`,
+        title: selectedOrderId ? "Order Diupdate!" : "Order Dibuat!",
+        description: `Order untuk ${selectedCustomer.name} berhasil diproses.`,
+      });
+
+      // Reset form
+      setSelectedCustomer(null);
+      setSelectedServices([]);
+      setSelectedOrderId(null);
+      
+      // Refresh page data (optional, or use router.refresh())
+      window.location.reload(); 
+
+    } catch (error) {
+      console.error("Submit error:", error);
+      toast({
+        title: "Gagal",
+        description: "Terjadi kesalahan saat memproses order.",
+        variant: "destructive",
       });
     }
+  };
 
-    setSelectedCustomer(null);
-    setSelectedServices([]);
-    setSelectedOrderId(null);
+  const handleCancelOrder = async () => {
+    if (!selectedOrderId) return;
+
+    try {
+      const response = await fetch(`http://localhost:4001/api/jobs/${selectedOrderId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelled" }),
+      });
+
+      if (!response.ok) throw new Error("Failed to cancel order");
+
+      toast({
+        title: "Order Dibatalkan",
+        description: `Order #${selectedOrderId} berhasil dibatalkan.`,
+      });
+
+      setSelectedCustomer(null);
+      setSelectedServices([]);
+      setSelectedOrderId(null);
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Cancel error:", error);
+      toast({
+        title: "Gagal",
+        description: "Tidak dapat membatalkan order sekarang.",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatCurrency = (amount: number) =>
@@ -377,39 +494,82 @@ export function NewOrderForm({
           <Card>
             <CardHeader>
               <CardTitle>2. Pilih Layanan</CardTitle>
+              {isEditingExisting && (
+                <CardDescription className="text-amber-700">
+                  Layanan dipilih pelanggan dan terkunci. Ubah hanya berat.
+                </CardDescription>
+              )}
             </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {services.map((service) => {
-                const Icon = serviceIcons[service.icon];
-                const isSelected = selectedServices.some(
-                  (s) => s.service.id === service.id
-                );
-                return (
-                  <Card
-                    key={service.id}
-                    onClick={() => handleSelectService(service)}
-                    className={cn(
-                      "cursor-pointer transition-all",
-                      isSelected && "border-blue-500 border-2 shadow-lg"
-                    )}
-                  >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        {service.name}
-                      </CardTitle>
-                      {Icon && <Icon className="h-4 w-4 text-blue-500" />}
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-lg font-bold">
-                        {formatCurrency(service.price)}
+            <CardContent
+              className={cn(
+                isEditingExisting
+                  ? "space-y-3"
+                  : "grid grid-cols-2 md:grid-cols-3 gap-4"
+              )}
+            >
+              {isEditingExisting ? (
+                selectedServices.length > 0 ? (
+                  selectedServices.map(({ service }) => {
+                    const Icon = serviceIcons[service.icon] || WashingMachine;
+                    return (
+                      <div
+                        key={service.id}
+                        className="flex items-center justify-between rounded-md border px-3 py-2 bg-muted/40"
+                      >
+                        <div className="flex items-center gap-2">
+                          {Icon && <Icon className="h-4 w-4 text-blue-500" />}
+                          <div>
+                            <p className="font-semibold text-sm">{service.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {service.type === "express" ? "Express" : "Regular"} • per {service.unit}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant="outline">Terkunci</Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        per {service.unit}
-                      </p>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                    );
+                  })
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Order tidak memiliki layanan terdaftar.
+                  </p>
+                )
+              ) : (
+                services.map((service) => {
+                  const Icon = serviceIcons[service.icon];
+                  const isSelected = selectedServices.some(
+                    (s) => s.service.id === service.id
+                  );
+                  return (
+                    <Card
+                      key={service.id}
+                      onClick={() => handleSelectService(service)}
+                      className={cn(
+                        "transition-all",
+                        isSelected && "border-blue-500 border-2 shadow-lg",
+                        isEditingExisting
+                          ? "pointer-events-none opacity-70"
+                          : "cursor-pointer"
+                      )}
+                    >
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                          {service.name}
+                        </CardTitle>
+                        {Icon && <Icon className="h-4 w-4 text-blue-500" />}
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-lg font-bold">
+                          {formatCurrency(service.price)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          per {service.unit}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              )}
             </CardContent>
           </Card>
         </div>
@@ -433,6 +593,7 @@ export function NewOrderForm({
                         size="icon"
                         className="h-6 w-6"
                         onClick={() => handleSelectService(service)}
+                        disabled={isEditingExisting}
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -440,13 +601,14 @@ export function NewOrderForm({
                     <div className="flex items-center gap-2">
                       <Input
                         type="number"
-                        value={quantity}
-                        onChange={(e) =>
+                        value={quantity === 0 ? "" : String(quantity)}
+                        onChange={(e) => {
+                          const v = e.target.value;
                           handleQuantityChange(
                             service.id,
-                            parseFloat(e.target.value) || 0
-                          )
-                        }
+                            v === "" ? 0 : parseFloat(v)
+                          );
+                        }}
                         className="flex-1"
                         min="0.1"
                         step="0.1"
@@ -511,6 +673,15 @@ export function NewOrderForm({
               <p className="text-3xl font-bold tracking-tighter">
                 {formatCurrency(total)}
               </p>
+              {selectedOrderId && (
+                <Button
+                  variant="outline"
+                  className="w-full mt-4 border-destructive text-destructive"
+                  onClick={handleCancelOrder}
+                >
+                  Batalkan Order
+                </Button>
+              )}
               <Button
                 onClick={handleSubmitOrder}
                 className="w-full mt-4"

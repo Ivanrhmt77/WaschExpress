@@ -39,21 +39,44 @@ export default function NewOrderFormUser() {
     [selectedServiceId]
   );
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !phone.trim() || !selectedService) {
       toast({ title: "Lengkapi data", description: "Nama, nomor HP, dan layanan wajib diisi.", variant: "destructive" });
       return;
     }
 
-    toast({
-      title: "Permintaan diterima",
-      description: "Admin akan menimbang cucian dan menginformasikan total biaya.",
-    });
+    try {
+      const response = await fetch("http://localhost:4001/api/submitJob", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          service_type: selectedService.type,
+        }),
+      });
 
-    setName("");
-    setPhone("");
-    setSelectedServiceId(mockServices[0]?.id ?? "");
+      if (!response.ok) {
+        throw new Error("Failed to submit order");
+      }
+
+      toast({
+        title: "Permintaan diterima",
+        description: "Admin akan menimbang cucian dan menginformasikan total biaya.",
+      });
+
+      setName("");
+      setPhone("");
+      setSelectedServiceId(mockServices[0]?.id ?? "");
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({
+        title: "Gagal mengirim permintaan",
+        description: "Terjadi kesalahan saat menghubungi server.",
+        variant: "destructive",
+      });
+    }
   }
 
   return (

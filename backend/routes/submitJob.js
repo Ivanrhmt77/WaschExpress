@@ -1,70 +1,85 @@
 const express = require("express");
-const { createClient } = require("@supabase/supabase-js");
-const { SUPABASE_URL, SUPABASE_ANON_KEY } = require("../supabaseClient");
+const { supabaseAdmin } = require("../supabaseClient");
 const { processingSlotFromKilos } = require("../utils/featureBuilder");
 
 const router = express.Router();
 
 /**
- * Build an authenticated Supabase client using the caller's access token.
- * @param {string} accessToken
- */
-function getAuthedClient(accessToken) {
-  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    global: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  });
-}
-
-/**
  * POST /api/submitJob
- * Requires Authorization: Bearer <access_token>
- * Body: { kilos: number; service_type: "regular"|"express" }
+ * Public endpoint for submitting orders.
+ * Body: { name: string, phone: string, service_type: "regular"|"express" }
  */
 router.post("/", async (req, res) => {
   try {
-    const authHeader = req.headers.authorization || req.headers.Authorization;
-    if (!authHeader || !authHeader.toString().toLowerCase().startsWith("bearer ")) {
-      return res.status(401).json({ error: "Missing bearer token" });
+    const { name, phone, service_type } = req.body || {};
+
+    if (!name || !phone || !["regular", "express"].includes(service_type)) {
+      return res.status(400).json({ error: "Invalid payload. Name, phone, and valid service_type are required." });
     }
 
-    const accessToken = authHeader.toString().slice(7).trim();
-    const client = getAuthedClient(accessToken);
-
-    const { data: userData, error: userError } = await client.auth.getUser(accessToken);
-    if (userError || !userData?.user) {
-      return res.status(401).json({ error: "Invalid or expired token" });
-    }
-
-    const { kilos, service_type } = req.body || {};
-    if (typeof kilos !== "number" || !["regular", "express"].includes(service_type)) {
-      return res.status(400).json({ error: "Invalid payload" });
-    }
-
-    const processing_slot_min = processingSlotFromKilos(kilos);
-
-    const { data, error } = await client
-      .from("jobs")
-      .insert({
-        kilos,
-        service_type,
-        status: "queued",
-        processing_slot_min,
-        customer_id: userData.user.id,
-      })
-      .select("id,kilos,service_type,processing_slot_min,status,created_at")
+    // 1. Find or Create Customer
+    let customerId;
+    
+    // Check if customer exists by phone
+    const { data: existingCustomer, error: findError } = await supabaseAdmin
+      .from("customers")
+      .select("id")
+      .eq("phone", phone)
       .single();
 
-    if (error) {
-      return res.status(400).json({ error: "Insert failed", details: error.message });
+    if (findError && findError.code !== 'PGRST116') { // PGRST116 is "Row not found"
+      console.error("Error finding customer:", findError);
+      return res.status(500).json({ error: "Database error checking customer" });
     }
 
-    return res.status(201).json({ job: data });
+    if (existingCustomer) {
+      customerId = existingCustomer.id;
+    } else {
+      // Create new customer
+      const { data: newCustomer, error: createError } = await supabaseAdmin
+        .from("customers")
+        .insert([{ name, phone }])
+        .select("id")
+        .single();
+
+      if (createError) {
+        console.error("Error creating customer:", createError);
+        return res.status(500).json({ error: "Failed to create customer" });
+      }
+      customerId = newCustomer.id;
+    }
+
+    // 2. Create Job (Order)
+    // Kilos is 0 initially, status is 'queued' (or we could use a different status if schema allowed)
+    // We use 0 kilos to indicate it needs weighing.
+    const { data: job, error: jobError } = await supabaseAdmin
+      .from("jobs")
+      .insert([
+        {
+          customer_id: customerId,
+          service_type,
+          kilos: 0, // Placeholder until admin weighs it
+          status: "queued",
+          processing_slot_min: 0 // Will be updated when kilos are updated
+        }
+      ])
+      .select()
+      .single();
+
+    if (jobError) {
+      console.error("Error creating job:", jobError);
+      return res.status(500).json({ error: "Failed to create order" });
+    }
+
+    return res.status(201).json({ 
+      message: "Order created successfully", 
+      orderId: job.id,
+      customerId: customerId 
+    });
+
   } catch (err) {
-    return res.status(500).json({ error: "Unexpected error", details: err.message });
+    console.error("Submit job error:", err);
+    return res.status(500).json({ error: "Internal server error", details: err.message });
   }
 });
 

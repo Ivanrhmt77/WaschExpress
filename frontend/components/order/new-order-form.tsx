@@ -216,25 +216,36 @@ export function NewOrderForm({
     return () => clearTimeout(timer);
   }, [selectedServices, toast]);
 
-  const handleSaveCustomer = (
+  const handleSaveCustomer = async (
     customerData: Omit<Customer, "id" | "totalOrders" | "createdAt">
   ) => {
-    const newCustomer: Customer = {
-      ...customerData,
-      id: `CUST-${String(customers.length + 1).padStart(3, "0")}`,
-      totalOrders: 0,
-      createdAt: new Date(),
-    };
-    setCustomers([newCustomer, ...customers]);
-    setSelectedCustomer(newCustomer);
-    setIsCustomerModalOpen(false);
-    toast({
-      title: "Sukses",
-      description: "Customer baru berhasil ditambahkan.",
-    });
+    try {
+      const response = await fetch("http://localhost:4001/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customerData),
+      });
+
+      if (!response.ok) throw new Error("Failed to create customer");
+
+      const newCustomer = await response.json();
+      setCustomers([newCustomer, ...customers]);
+      setSelectedCustomer(newCustomer);
+      setIsCustomerModalOpen(false);
+      toast({
+        title: "Sukses",
+        description: "Customer baru berhasil ditambahkan.",
+      });
+    } catch (error) {
+      toast({
+        title: "Gagal",
+        description: "Gagal menambahkan customer baru.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     if (!selectedCustomer) {
       toast({
         title: "Gagal",
@@ -251,24 +262,56 @@ export function NewOrderForm({
       });
       return;
     }
-    
-    if (selectedOrderId) {
-      // Logic to update order
+
+    try {
+      const service = selectedServices[0]; // Assuming single service for now
+      const payload = {
+        customerId: selectedCustomer.id,
+        service_type: service.service.type,
+        kilos: service.quantity,
+        status: "Dicuci", // Move to processing immediately
+      };
+
+      let response;
+      if (selectedOrderId) {
+        // Update existing job
+        response = await fetch(`http://localhost:4001/api/jobs/${selectedOrderId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        // Create new job
+        response = await fetch("http://localhost:4001/api/jobs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      if (!response.ok) throw new Error("Failed to submit order");
+
       toast({
-        title: "Order Diupdate!",
-        description: `Order #${selectedOrderId} berhasil diperbarui dengan berat/jumlah baru.`,
+        title: selectedOrderId ? "Order Diupdate!" : "Order Dibuat!",
+        description: `Order untuk ${selectedCustomer.name} berhasil diproses.`,
       });
-    } else {
-      // Logic to create new order
+
+      // Reset form
+      setSelectedCustomer(null);
+      setSelectedServices([]);
+      setSelectedOrderId(null);
+      
+      // Refresh page data (optional, or use router.refresh())
+      window.location.reload(); 
+
+    } catch (error) {
+      console.error("Submit error:", error);
       toast({
-        title: "Order Dibuat!",
-        description: `Order untuk ${selectedCustomer.name} berhasil dibuat.`,
+        title: "Gagal",
+        description: "Terjadi kesalahan saat memproses order.",
+        variant: "destructive",
       });
     }
-
-    setSelectedCustomer(null);
-    setSelectedServices([]);
-    setSelectedOrderId(null);
   };
 
   const formatCurrency = (amount: number) =>

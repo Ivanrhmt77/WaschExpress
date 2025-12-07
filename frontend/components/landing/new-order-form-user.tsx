@@ -33,6 +33,7 @@ export default function NewOrderFormUser() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedServiceId, setSelectedServiceId] = useState<string>(mockServices[0]?.id ?? "");
+  const [pickup, setPickup] = useState<boolean>(false);
 
   const selectedService: Service | undefined = useMemo(
     () => mockServices.find((s) => s.id === selectedServiceId),
@@ -54,6 +55,7 @@ export default function NewOrderFormUser() {
           name,
           phone,
           service_type: selectedService.type,
+          pickup,
         }),
       });
 
@@ -69,6 +71,7 @@ export default function NewOrderFormUser() {
       setName("");
       setPhone("");
       setSelectedServiceId(mockServices[0]?.id ?? "");
+      setPickup(false);
     } catch (error) {
       console.error("Submission error:", error);
       toast({
@@ -179,7 +182,36 @@ export default function NewOrderFormUser() {
               </CardContent>
             </Card>
 
-            <Separator />
+              {/* Pickup Option */}
+              <Card className="border-rose-200 dark:border-rose-800">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Truck className="h-5 w-5 text-rose-600" />
+                    Antar Jemput (Opsional)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Tambahkan layanan antar jemput</p>
+                      <p className="text-sm text-muted-foreground">Biaya tambahan: {formatCurrency(5000)}</p>
+                    </div>
+                    <div>
+                      <label className="inline-flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={pickup}
+                          onChange={(e) => setPickup(e.target.checked)}
+                          className="h-4 w-4"
+                        />
+                        <span className="text-sm">Ya</span>
+                      </label>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Separator />
 
             {/* Submit Section */}
             <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">

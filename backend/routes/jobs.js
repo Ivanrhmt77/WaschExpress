@@ -32,6 +32,7 @@ router.get("/pending", async (req, res) => {
         price: job.service_type === 'express' ? 10000 : 6000, // Mock price
         unit: 'kg'
       }],
+      pickup: !!job.pickup,
       status: job.status === 'queued' ? 'Tertunda' : job.status, // Map status
       total: 0, // To be calculated
       createdAt: job.created_at,
@@ -51,6 +52,15 @@ router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { kilos, status, service_type } = req.body;
 
+    // Fetch existing job to protect immutable fields (like original service_type)
+    const { data: existing, error: fetchErr } = await supabaseAdmin
+      .from('jobs')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr) throw fetchErr;
+
     const updates = {};
     if (kilos !== undefined) {
       updates.kilos = kilos;
@@ -66,7 +76,8 @@ router.put("/:id", async (req, res) => {
       };
       updates.status = statusMap[status] || status;
     }
-    if (service_type) updates.service_type = service_type;
+    // Do not allow changing service_type if job already has one (customer choice)
+    if (service_type && !existing.service_type) updates.service_type = service_type;
 
     const { data, error } = await supabaseAdmin
       .from("jobs")

@@ -11,7 +11,7 @@ const router = express.Router();
  */
 router.post("/", async (req, res) => {
   try {
-    const { name, phone, service_type } = req.body || {};
+    const { name, phone, service_type, pickup } = req.body || {};
 
     if (!name || !phone || !["regular", "express"].includes(service_type)) {
       return res.status(400).json({ error: "Invalid payload. Name, phone, and valid service_type are required." });
@@ -60,7 +60,8 @@ router.post("/", async (req, res) => {
           service_type,
           kilos: 0, // Placeholder until admin weighs it
           status: "queued",
-          processing_slot_min: 0 // Will be updated when kilos are updated
+          processing_slot_min: 0, // Will be updated when kilos are updated
+          pickup: pickup === true || pickup === "true"
         }
       ])
       .select()

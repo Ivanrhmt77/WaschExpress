@@ -25,6 +25,7 @@ create table if not exists jobs (
 
   kilos numeric(6,1) not null,
   service_type text not null check (service_type in ('regular','express')),
+  pickup boolean default false,
 
   arrival_time timestamptz not null default now(),
   status text not null check (status in ('queued','processing','done','cancelled')) default 'queued',

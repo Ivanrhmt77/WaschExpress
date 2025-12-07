@@ -58,7 +58,7 @@ export default function NewOrderFormUser() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+      <Card className="shadow-lg border-0 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
         <CardHeader className="text-center pb-6">
           <CardTitle className="text-3xl font-bold text-blue-600 dark:text-blue-400">
             Pesan Laundry Sekarang

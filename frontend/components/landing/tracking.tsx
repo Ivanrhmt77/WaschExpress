@@ -1,9 +1,19 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function Tracking() {
+  const [trackingCode, setTrackingCode] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = () => {
+    if (trackingCode.trim() === "") return; // Jangan redirect kalau kosong
+    router.push(`/track/${trackingCode.trim()}`);
+  };
+
   return (
     <section id="track" className="py-24 md:py-32 bg-white">
       <div className="container mx-auto px-4">
@@ -29,10 +39,14 @@ export default function Tracking() {
                 type="text"
                 placeholder="Contoh: WEX-12345"
                 className="flex-1 text-center sm:text-left text-lg h-16 rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 bg-white text-gray-900 placeholder-gray-400"
+                value={trackingCode}
+                onChange={(e) => setTrackingCode(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()} // Enter juga submit
               />
               <Button
                 size="lg"
                 className="h-16 px-10 rounded-xl font-bold text-lg bg-linear-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                onClick={handleSubmit}
               >
                 Lacak Sekarang
               </Button>

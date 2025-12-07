@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import type { Customer, Service, Order } from "@/lib/types";
+import { getSmartPrediction } from "@/ai/ai-smart-prediction";
 import {
   Shirt,
   WashingMachine,
@@ -47,6 +48,8 @@ import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 const IroningIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -86,6 +89,12 @@ type SelectedService = {
   quantity: number;
 };
 
+type AiResult = {
+  estimatedCompletionTime: string;
+  weatherCondition: string;
+  priority?: string;
+};
+
 export function NewOrderForm({
   customers: initialCustomers,
   services,
@@ -100,10 +109,7 @@ export function NewOrderForm({
     []
   );
   const [isAiCalculating, setIsAiCalculating] = useState(false);
-  const [aiResult, setAiResult] = useState<{
-    time: Date;
-    weather: "sun" | "rain";
-  } | null>(null);
+  const [aiResult, setAiResult] = useState<AiResult | null>(null);
   const { toast } = useToast();
 
   const handleSelectService = (service: Service) => {
@@ -133,31 +139,53 @@ export function NewOrderForm({
   }, [selectedServices]);
 
   useEffect(() => {
-    if (selectedServices.length > 0) {
-      setIsAiCalculating(true);
-      setAiResult(null);
-      const timer = setTimeout(() => {
+    const fetchPrediction = async () => {
+      if (selectedServices.length > 0) {
+        setIsAiCalculating(true);
+        setAiResult(null);
+
+        const serviceTypes = selectedServices
+          .map((s) => s.service.name)
+          .join(", ");
+        const totalQuantity = selectedServices.reduce(
+          (acc, s) => acc + s.quantity,
+          0
+        );
         const isExpress = selectedServices.some(
           (s) => s.service.type === "express"
         );
-        const baseHours = isExpress ? 6 : 24;
-        const completionTime = new Date();
-        completionTime.setHours(
-          completionTime.getHours() + baseHours + Math.random() * 4
-        );
 
-        setAiResult({
-          time: completionTime,
-          weather: Math.random() > 0.5 ? "sun" : "rain",
-        });
+        try {
+          const result = await getSmartPrediction({
+            serviceType: serviceTypes,
+            quantity: totalQuantity,
+            isExpress: isExpress,
+          });
+          setAiResult(result);
+        } catch (error) {
+          console.error("AI prediction failed:", error);
+          toast({
+            title: "Prediksi AI Gagal",
+            description:
+              "Gagal mendapatkan estimasi dari AI. Silakan coba lagi.",
+            variant: "destructive",
+          });
+          setAiResult(null); // Clear previous results on error
+        } finally {
+          setIsAiCalculating(false);
+        }
+      } else {
         setIsAiCalculating(false);
-      }, 1500);
-      return () => clearTimeout(timer);
-    } else {
-      setIsAiCalculating(false);
-      setAiResult(null);
-    }
-  }, [selectedServices]);
+        setAiResult(null);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      fetchPrediction();
+    }, 500); // Debounce API call
+
+    return () => clearTimeout(timer);
+  }, [selectedServices, toast]);
 
   const handleSaveCustomer = (
     customerData: Omit<Customer, "id" | "totalOrders" | "createdAt">
@@ -209,6 +237,31 @@ export function NewOrderForm({
       currency: "IDR",
       minimumFractionDigits: 0,
     }).format(amount);
+  const formatEstimationDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return format(date, "eeee, d MMMM yyyy 'pukul' HH:mm", { locale: id });
+    } catch (e) {
+      return dateString; // Fallback to raw string if format fails
+    }
+  };
+
+  const getWeatherIcon = (weather: string) => {
+    const lowerCaseWeather = weather.toLowerCase();
+    if (
+      lowerCaseWeather.includes("hujan") ||
+      lowerCaseWeather.includes("rain")
+    ) {
+      return <CloudRain className="h-5 w-5 text-blue-400" />;
+    }
+    if (
+      lowerCaseWeather.includes("cerah") ||
+      lowerCaseWeather.includes("sun")
+    ) {
+      return <Sun className="h-5 w-5 text-amber-500" />;
+    }
+    return <Sun className="h-5 w-5 text-muted-foreground" />;
+  };
 
   return (
     <>
@@ -385,28 +438,18 @@ export function NewOrderForm({
                   aiResult && (
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        {aiResult.weather === "sun" ? (
-                          <Sun className="h-5 w-5 text-amber-500" />
-                        ) : (
-                          <CloudRain className="h-5 w-5 text-blue-400" />
-                        )}
-                        <p className="font-semibold">
-                          Estimasi Selesai:{" "}
-                          {aiResult.time.toLocaleDateString("id-ID", {
-                            weekday: "long",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
+                        {getWeatherIcon(aiResult.weatherCondition)}
+                        <p className="font-semibold">Estimasi Selesai:</p>
                       </div>
-                      {selectedServices.some(
-                        (s) => s.service.type === "express"
-                      ) && (
+                      <p className="font-bold text-primary">
+                        {formatEstimationDate(aiResult.estimatedCompletionTime)}
+                      </p>
+                      {aiResult.priority && (
                         <Badge
                           variant="destructive"
                           className="bg-accent text-accent-foreground"
                         >
-                          PRIORITAS TINGGI
+                          {aiResult.priority}
                         </Badge>
                       )}
                     </div>

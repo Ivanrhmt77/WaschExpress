@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WaschExpress Demo</title>
+    <style>
+      body { font-family: system-ui, -apple-system, sans-serif; padding: 1rem; max-width: 720px; margin: 0 auto; }
+      label { display: block; margin-top: 0.5rem; }
+      input, select, button { padding: 0.4rem; margin-top: 0.25rem; }
+      #status { color: #444; margin-top: 0.5rem; }
+      #output { margin-top: 1rem; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <h1>WaschExpress Feature Builder + Prediction</h1>
+    <p>Start the mock API server with <code>pnpm run mock-server</code> then click “Run demo”.</p>
+
+    <label>
+      Kilos
+      <input id="kilos" type="number" min="0.5" max="35" step="0.1" value="8.5" />
+    </label>
+    <label>
+      Service type
+      <select id="service">
+        <option value="regular" selected>regular</option>
+        <option value="express">express</option>
+      </select>
+    </label>
+    <label>
+      Weather
+      <input id="weather" type="text" value="rainy" />
+    </label>
+
+    <button id="run-demo" type="button">Run demo</button>
+    <div id="status">Idle</div>
+    <div id="output"></div>
+
+    <script type="module" src="./dist/usage.bundle.js"></script>
+  </body>
+</html>

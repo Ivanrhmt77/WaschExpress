@@ -1,17 +1,25 @@
-"use client";
-
-import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
-import { mockOrders } from "@/lib/data";
 import { PublicTrackingView } from "@/components/tracking/public-tracking-view";
+import type { Order } from "@/lib/types";
 
-export default function PublicTrackPage() {
-  const params = useParams();
-  const id = params?.id;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
 
-  const order = mockOrders.find((o) => o.id === id);
+export default async function PublicTrackPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
-  if (!order) notFound();
+  let order: Order | null = null;
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/jobs/${id}`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      order = await res.json();
+    }
+  } catch (_) {
+    order = null;
+  }
+
+  if (!order) return notFound();
 
   return <PublicTrackingView order={order} />;
 }

@@ -129,11 +129,13 @@ export function PublicTrackingView({ order }: { order: Order }) {
                 </h3>
               </div>
               <p className="text-blue-700 font-bold text-lg">
-                {format(
-                  order.estimatedCompletion,
-                  "eeee, d MMMM yyyy 'pukul' HH:mm",
-                  { locale: id }
-                )}
+                {order.estimatedCompletion
+                  ? format(
+                      new Date(order.estimatedCompletion as unknown as string),
+                      "eeee, d MMMM yyyy 'pukul' HH:mm",
+                      { locale: id }
+                    )
+                  : "Belum tersedia"}
               </p>
             </div>
 

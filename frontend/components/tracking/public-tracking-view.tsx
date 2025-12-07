@@ -5,7 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { Shirt, Clock, Package } from "lucide-react";
+import { Shirt, Clock, Package, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 const statuses: OrderStatus[] = [
   "Tertunda",
@@ -33,9 +34,20 @@ export function PublicTrackingView({ order }: { order: Order }) {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-yellow-50 py-12 px-4">
+    // UBAH: py-12 jadi py-16 biar lebih lega atas bawahnya
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-yellow-50 py-16 px-4">
       <div className="max-w-md mx-auto space-y-6">
-        {/* Logo Header */}
+        {/* UBAH: mb-2 jadi mb-10 biar ada jarak jauh ke logo */}
+        <div className="mb-10">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors group"
+          >
+            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+            Kembali
+          </Link>
+        </div>
+
         <div className="flex justify-center items-center gap-3 mb-8">
           <div className="p-2.5 rounded-xl bg-linear-to-br from-blue-600 via-indigo-600 to-purple-600 shadow-lg">
             <Shirt className="h-7 w-7 text-white" />
@@ -46,7 +58,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
         </div>
 
         <Card className="w-full shadow-xl overflow-hidden py-0">
-          {/* Header with gradient */}
           <CardHeader className="text-center bg-linear-to-r from-blue-600 to-indigo-600 text-white pb-8 pt-6">
             <h1 className="text-2xl font-bold mb-2">Status Order Anda</h1>
             <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full">
@@ -55,7 +66,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
           </CardHeader>
 
           <CardContent className="space-y-6 pt-8 pb-6">
-            {/* Status Progress */}
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-semibold text-gray-700">
@@ -66,7 +76,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
                 </Badge>
               </div>
 
-              {/* Custom Progress Dots */}
               <div className="relative pt-2 pb-6">
                 <div className="flex justify-between items-center mb-2">
                   {statuses.map((status, index) => (
@@ -91,7 +100,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
                   ))}
                 </div>
 
-                {/* Progress Line */}
                 <div
                   className="absolute top-7 left-0 right-0 h-1 bg-gray-200 mx-5"
                   style={{ zIndex: 0 }}
@@ -102,7 +110,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
                   />
                 </div>
 
-                {/* Status Labels */}
                 <div className="flex justify-between text-xs font-medium text-gray-600 mt-2">
                   <span className="text-center w-16">Diterima</span>
                   <span className="text-center w-16">Dicuci</span>
@@ -114,7 +121,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
 
             <Separator />
 
-            {/* Estimated Completion */}
             <div className="bg-linear-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="w-5 h-5 text-blue-600" />
@@ -133,7 +139,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
 
             <Separator />
 
-            {/* Service Summary */}
             <div className="space-y-3">
               <h3 className="font-semibold text-gray-800 flex items-center gap-2">
                 <Package className="w-5 h-5 text-indigo-600" />
@@ -164,7 +169,6 @@ export function PublicTrackingView({ order }: { order: Order }) {
           </CardContent>
         </Card>
 
-        {/* Footer Note */}
         <p className="text-center text-sm text-gray-500 mt-6">
           Terima kasih telah mempercayai WaschExpress! 💙
         </p>

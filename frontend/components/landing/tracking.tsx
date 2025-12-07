@@ -41,7 +41,7 @@ export default function Tracking() {
                 className="flex-1 text-center sm:text-left text-lg h-16 rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 bg-white text-gray-900 placeholder-gray-400"
                 value={trackingCode}
                 onChange={(e) => setTrackingCode(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSubmit()} // Enter juga submit
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               />
               <Button
                 size="lg"

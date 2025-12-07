@@ -46,7 +46,7 @@ router.get("/pending", async (req, res) => {
   }
 });
 
-// Update job (Admin sets weight/details)
+// Update job (Admin sets weight/details/status)
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -72,7 +72,8 @@ router.put("/:id", async (req, res) => {
         'Tertunda': 'queued',
         'Dicuci': 'processing',
         'Siap Diambil': 'done',
-        'Selesai': 'done'
+        'Selesai': 'done',
+        'cancelled': 'cancelled'
       };
       updates.status = statusMap[status] || status;
     }
@@ -116,6 +117,24 @@ router.post("/", async (req, res) => {
     if (error) throw error;
 
     return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete job (hard delete)
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { error } = await supabaseAdmin
+      .from("jobs")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+
+    return res.status(204).send();
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

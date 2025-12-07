@@ -2,12 +2,27 @@ import { Activity, CreditCard, DollarSign, WashingMachine } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { mockOrders } from "@/lib/data";
+// server component - will fetch jobs from backend
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 
-export default function DashboardPage() {
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+
+async function fetchRecentJobs() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/jobs/history`, { cache: "no-store" });
+    if (!res.ok) return [];
+    const data = await res.json();
+    // Ensure createdAt is a Date object
+    return data.map((o: any) => ({ ...o, createdAt: o.createdAt ? new Date(o.createdAt) : null }));
+  } catch (e) {
+    return [];
+  }
+}
+
+export default async function DashboardPage() {
+  const jobs = await fetchRecentJobs();
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -16,20 +31,26 @@ export default function DashboardPage() {
     }).format(amount);
   };
 
-  const todayRevenue = mockOrders
+  const allOrders = jobs || [];
+
+  const todayRevenue = allOrders
     .filter(
-      (order) =>
+      (order: any) =>
+        order.createdAt &&
         order.createdAt.toDateString() === new Date().toDateString() &&
         order.status !== "Tertunda"
     )
-    .reduce((sum, order) => sum + order.total, 0);
+    .reduce((sum: number, order: any) => sum + (order.total || 0), 0);
 
-  const activeOrders = mockOrders.filter(
-    (order) => order.status === "Dicuci"
-  ).length;
+  const activeOrders = allOrders.filter((order: any) => order.status === "Dicuci").length;
 
-  const recentOrders = mockOrders
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  const recentOrders = allOrders
+    .slice()
+    .sort((a: any, b: any) => {
+      const at = a.createdAt ? a.createdAt.getTime() : 0;
+      const bt = b.createdAt ? b.createdAt.getTime() : 0;
+      return bt - at;
+    })
     .slice(0, 5);
 
   return (

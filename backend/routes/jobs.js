@@ -38,6 +38,11 @@ const toFrontendOrder = (job) => {
     id: job.id,
     customerId: job.customer_id,
     customerName: job.customers?.name || "Unknown",
+    customer: {
+      id: job.customers?.id || null,
+      name: job.customers?.name || null,
+      phone: job.customers?.phone || null,
+    },
     items: [
       {
         serviceId: isExpress ? "SVC-EXPRESS" : "SVC-REGULAR",
@@ -60,13 +65,14 @@ router.get("/pending", async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from("jobs")
-      .select(`
-        *,
-        customers (
-          name,
-          phone
-        )
-      `)
+        .select(`
+          *,
+          customers (
+            id,
+            name,
+            phone
+          )
+        `)
       .eq("status", "queued")
       .order("created_at", { ascending: true });
 
@@ -91,6 +97,7 @@ router.get("/history", async (req, res) => {
       .select(`
         *,
         customers (
+          id,
           name,
           phone
         )
@@ -120,6 +127,7 @@ router.get("/:id", async (req, res) => {
       .select(`
         *,
         customers (
+          id,
           name,
           phone
         )

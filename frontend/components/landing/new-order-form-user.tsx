@@ -105,6 +105,23 @@ export default function NewOrderFormUser() {
     }
   }
 
+  // Format phone input to international-ish: replace leading 0 with 62,
+  // and if user types starting with 8 (e.g. 8xxxx), prepend 62 so they only
+  // need to type the local part after 62. Store only digits.
+  function formatPhoneInput(raw: string) {
+    const digits = raw.replace(/\D/g, "");
+    if (!digits) return "";
+    if (digits.startsWith("0")) {
+      return "62" + digits.slice(1);
+    }
+    return digits;
+  }
+
+  // Ensure quick UX: when focusing the phone field, if it's empty prefill '62'
+  function handlePhoneFocus() {
+    if (!phone) setPhone("62");
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <Card className="shadow-lg border-0 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
@@ -150,9 +167,10 @@ export default function NewOrderFormUser() {
                     </Label>
                     <Input
                       id="phone"
-                      placeholder="08xxxxxxxxxx"
+                      placeholder="8xxxxxxxxxx"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => setPhone(formatPhoneInput(e.target.value))}
+                      onFocus={handlePhoneFocus}
                       required
                       className="h-12"
                       disabled={isSubmitting}

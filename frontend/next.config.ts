@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["express", "genkit", "@genkit-ai/core"],
-  },
-  /* config options here */
+  serverExternalPackages: ["express", "genkit", "@genkit-ai/core"],
+
+  experimental: {},
 };
 
 export default nextConfig;

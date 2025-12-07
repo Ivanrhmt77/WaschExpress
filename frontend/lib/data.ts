@@ -67,7 +67,7 @@ export const mockServices: Service[] = [
     price: 4000,
     unit: "kg",
     type: "regular",
-    icon: "Ironing",
+    icon: "Layers",
   },
   {
     id: "SVC-004",
@@ -75,7 +75,7 @@ export const mockServices: Service[] = [
     price: 9000,
     unit: "kg",
     type: "express",
-    icon: "Zap",
+    icon: "Timer",
   },
   {
     id: "SVC-005",
@@ -83,7 +83,7 @@ export const mockServices: Service[] = [
     price: 15000,
     unit: "pcs",
     type: "regular",
-    icon: "Package",
+    icon: "Droplet",
   },
   {
     id: "SVC-006",

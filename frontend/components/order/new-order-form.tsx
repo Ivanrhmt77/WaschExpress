@@ -8,12 +8,14 @@ import {
   WashingMachine,
   Truck,
   Zap,
-  Package,
+  Layers,
   PlusCircle,
   Sun,
   CloudRain,
   Loader,
   X,
+  Timer,
+  Droplet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,32 +53,13 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
-const IroningIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M3 16h18" />
-    <path d="M3 16l2.15-9.15A2 2 0 0 1 7.02 5h9.96a2 2 0 0 1 1.87 1.85L21 16" />
-    <path d="M11 12H9" />
-  </svg>
-);
-
 const serviceIcons: { [key: string]: React.ElementType } = {
   Shirt,
   WashingMachine,
-  Ironing: IroningIcon,
+  Layers,
   Truck,
-  Zap,
-  Package,
+  Timer,
+  Droplet,
 };
 
 type NewOrderFormProps = {
@@ -338,23 +321,14 @@ export function NewOrderForm({
                     onClick={() => handleSelectService(service)}
                     className={cn(
                       "cursor-pointer transition-all",
-                      isSelected && "border-primary border-2 shadow-lg"
+                      isSelected && "border-blue-500 border-2 shadow-lg"
                     )}
                   >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         {service.name}
                       </CardTitle>
-                      {Icon && (
-                        <Icon
-                          className={cn(
-                            "h-4 w-4",
-                            service.type === "express"
-                              ? "text-accent"
-                              : "text-muted-foreground"
-                          )}
-                        />
-                      )}
+                      {Icon && <Icon className="h-4 w-4 text-blue-500" />}
                     </CardHeader>
                     <CardContent>
                       <div className="text-lg font-bold">

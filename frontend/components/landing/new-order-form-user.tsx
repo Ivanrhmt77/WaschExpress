@@ -49,7 +49,6 @@ export default function NewOrderFormUser() {
     toast({
       title: "Permintaan diterima",
       description: "Admin akan menimbang cucian dan menginformasikan total biaya.",
-      icon: <CheckCircle2 className="h-4 w-4 text-green-600" />,
     });
 
     setName("");

@@ -601,13 +601,14 @@ export function NewOrderForm({
                     <div className="flex items-center gap-2">
                       <Input
                         type="number"
-                        value={quantity}
-                        onChange={(e) =>
+                        value={quantity === 0 ? "" : String(quantity)}
+                        onChange={(e) => {
+                          const v = e.target.value;
                           handleQuantityChange(
                             service.id,
-                            parseFloat(e.target.value) || 0
-                          )
-                        }
+                            v === "" ? 0 : parseFloat(v)
+                          );
+                        }}
                         className="flex-1"
                         min="0.1"
                         step="0.1"

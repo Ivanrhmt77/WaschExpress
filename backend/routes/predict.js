@@ -12,17 +12,24 @@ const router = express.Router();
 async function fetchWeather() {
   try {
     // Jakarta coordinates: -6.2088, 106.8456
-    const url = "https://api.open-meteo.com/v1/forecast?latitude=-6.2088&longitude=106.8456&current=weather_code";
-    const response = await axios.get(url);
-    const code = response.data.current.weather_code;
-    
-    // Map WMO codes to simple strings
+    // Use Open-Meteo current weather endpoint. No API key required for Open-Meteo.
+    // Correct param is `current_weather=true` and result is in `response.data.current_weather.weathercode`.
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=-6.2088&longitude=106.8456&current_weather=true";
+    const response = await axios.get(url, { timeout: 5000 });
+    const code = response?.data?.current_weather?.weathercode;
+
+    // If we don't get a numerical code, fallback to 'Cerah'
+    if (typeof code !== "number") return "Cerah";
+
+    // Map WMO weather codes (Open-Meteo uses WMO weather codes)
+    // 0: Clear sky
+    // 1,2,3: Mainly clear, partly cloudy, and overcast
+    // 51-67,80-82: Various precipitation codes (drizzle/rain)
+    // 95-99: Thunderstorm
     if (code === 0) return "Cerah";
     if (code >= 1 && code <= 3) return "Berawan";
-    if (code >= 51 && code <= 67) return "Hujan";
-    if (code >= 80 && code <= 82) return "Hujan";
+    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82) || (code >= 60 && code <= 63)) return "Hujan";
     if (code >= 95) return "Badai Petir";
-    
     return "Cerah"; // Default
   } catch (error) {
     console.error("Weather fetch failed:", error.message);

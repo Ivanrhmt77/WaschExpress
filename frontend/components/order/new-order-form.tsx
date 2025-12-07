@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import type { Customer, Service, Order } from "@/lib/types";
-import { getSmartPrediction } from "@/ai/ai-smart-prediction";
 import {
   Shirt,
   WashingMachine,
@@ -127,9 +126,6 @@ export function NewOrderForm({
         setIsAiCalculating(true);
         setAiResult(null);
 
-        const serviceTypes = selectedServices
-          .map((s) => s.service.name)
-          .join(", ");
         const totalQuantity = selectedServices.reduce(
           (acc, s) => acc + s.quantity,
           0
@@ -139,18 +135,34 @@ export function NewOrderForm({
         );
 
         try {
-          const result = await getSmartPrediction({
-            serviceType: serviceTypes,
-            quantity: totalQuantity,
-            isExpress: isExpress,
+          const response = await fetch("http://localhost:4001/api/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              kilos: totalQuantity,
+              service_type: isExpress ? "express" : "regular",
+            }),
           });
-          setAiResult(result);
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+
+          setAiResult({
+            estimatedCompletionTime: data.estimated_completion,
+            weatherCondition: data.weather_condition,
+            priority: isExpress ? "Express" : undefined,
+          });
         } catch (error) {
           console.error("AI prediction failed:", error);
           toast({
-            title: "Prediksi AI Gagal",
+            title: "Prediksi Gagal",
             description:
-              "Gagal mendapatkan estimasi dari AI. Silakan coba lagi.",
+              "Gagal mendapatkan estimasi dari server. Silakan coba lagi.",
             variant: "destructive",
           });
           setAiResult(null); // Clear previous results on error

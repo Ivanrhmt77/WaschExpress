@@ -7,15 +7,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
 
 async function fetchRecentJobs() {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/jobs/history`, { cache: "no-store" });
+    const res = await fetch(`${BACKEND_URL}/api/jobs/history`, {
+      cache: "no-store",
+    });
     if (!res.ok) return [];
     const data = await res.json();
     // Ensure createdAt is a Date object
-    return data.map((o: any) => ({ ...o, createdAt: o.createdAt ? new Date(o.createdAt) : null }));
+    return data.map((o: any) => ({
+      ...o,
+      createdAt: o.createdAt ? new Date(o.createdAt) : null,
+    }));
   } catch (e) {
     return [];
   }
@@ -42,7 +48,9 @@ export default async function DashboardPage() {
     )
     .reduce((sum: number, order: any) => sum + (order.total || 0), 0);
 
-  const activeOrders = allOrders.filter((order: any) => order.status === "Dicuci").length;
+  const activeOrders = allOrders.filter(
+    (order: any) => order.status === "Dicuci"
+  ).length;
 
   const recentOrders = allOrders
     .slice()
@@ -88,11 +96,12 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {recentOrders.map((order) => (
+              {/* PERBAIKAN DISINI: Menambahkan tipe : any pada parameter order */}
+              {recentOrders.map((order: any) => (
                 <div key={order.id} className="flex items-center">
                   <Avatar className="h-9 w-9">
                     <AvatarFallback>
-                      {order.customerName.charAt(0)}
+                      {order.customerName ? order.customerName.charAt(0) : "?"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="ml-4 space-y-1">
@@ -101,10 +110,12 @@ export default async function DashboardPage() {
                       <span className="font-bold">{order.customerName}</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {formatDistanceToNow(order.createdAt, {
-                        addSuffix: true,
-                        locale: id,
-                      })}
+                      {order.createdAt
+                        ? formatDistanceToNow(order.createdAt, {
+                            addSuffix: true,
+                            locale: id,
+                          })
+                        : "Baru saja"}
                     </p>
                   </div>
                   <div className="ml-auto font-medium">

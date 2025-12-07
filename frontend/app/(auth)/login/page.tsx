@@ -1,22 +1,34 @@
 "use client";
-
 import { useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 import { Shirt, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setError(null);
     setIsLoading(true);
 
-    setTimeout(() => {
-      console.log("Login attempt:", { email, password });
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (loginError) {
+      setError(loginError.message);
       setIsLoading(false);
-      alert("Login functionality will be integrated with your backend");
-    }, 1500);
+      return;
+    }
+
+    router.push("/admin");
+    router.refresh();
   };
 
   return (
@@ -40,6 +52,12 @@ export default function AdminLogin() {
             </p>
           </div>
 
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+              <span>{error}</span>
+            </div>
+          )}
+
           <div className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -56,7 +74,6 @@ export default function AdminLogin() {
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password
@@ -84,7 +101,6 @@ export default function AdminLogin() {
                 </button>
               </div>
             </div>
-
             <button
               type="button"
               onClick={handleSubmit}
@@ -119,7 +135,6 @@ export default function AdminLogin() {
               )}
             </button>
           </div>
-
           <div className="mt-6 pt-6 border-t border-gray-100 text-center">
             <p className="text-sm text-gray-500">
               © 2025 WaschExpress. All rights reserved.

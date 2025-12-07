@@ -1,28 +1,31 @@
+export const dynamic = "force-dynamic";
+
 import { NewOrderForm } from "@/components/order/new-order-form";
 import { PageHeader } from "@/components/shared/page-header";
 
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+
 async function getCustomers() {
   try {
-    const res = await fetch("http://localhost:4001/api/customers", {
+    const res = await fetch(`${BACKEND_URL}/api/customers`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
     return res.json();
   } catch (e) {
-    console.error("Failed to fetch customers", e);
     return [];
   }
 }
 
 async function getPendingOrders() {
   try {
-    const res = await fetch("http://localhost:4001/api/jobs/pending", {
+    const res = await fetch(`${BACKEND_URL}/api/jobs/pending`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
     return res.json();
   } catch (e) {
-    console.error("Failed to fetch pending orders", e);
     return [];
   }
 }
@@ -39,7 +42,6 @@ export default async function CreateOrderPage() {
       />
       <NewOrderForm
         customers={customers}
-        // Admin page is for processing existing orders; no service selection
         services={[]}
         pendingOrders={pendingOrders}
       />

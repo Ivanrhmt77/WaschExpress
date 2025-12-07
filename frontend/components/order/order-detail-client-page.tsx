@@ -43,15 +43,21 @@ export function OrderDetailClientPage({
     setOrder({ ...order, status: newStatus });
     toast({
       title: "Status Diperbarui",
-      description: `Status order #${order.id} telah diubah menjadi "${newStatus}".`,
+      description: `Status order #${order.id} telah diperbarui menjadi "${newStatus}".`,
     });
   };
 
   const handleSendWhatsApp = () => {
-    const message = `Halo ${customer.name}, cucianmu (ID: ${order.id}) sedang diproses. Cek status di: ${window.location.origin}/track/${order.id}`;
+    const message =
+      `Halo ${customer.name}! 👋\n\n` +
+      `Pesanan laundry kamu dengan ID *${order.id}* saat ini berada pada status: *${order.status}*.\n\n` +
+      `Kamu bisa cek progress lengkapnya di link berikut:\n${window.location.origin}/track/${order.id}\n\n` +
+      `Terima kasih telah menggunakan layanan kami! 🧺✨`;
+
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${
       customer.whatsapp
     }&text=${encodeURIComponent(message)}`;
+
     window.open(whatsappUrl, "_blank");
   };
 
@@ -132,7 +138,9 @@ export function OrderDetailClientPage({
           </CardContent>
         </Card>
       </div>
+
       <div className="space-y-8">
+        {/* Select Status */}
         <Card>
           <CardHeader>
             <CardTitle>Ubah Status</CardTitle>
@@ -158,6 +166,8 @@ export function OrderDetailClientPage({
             </Button>
           </CardContent>
         </Card>
+
+        {/* Ringkasan */}
         <Card>
           <CardHeader>
             <CardTitle>Ringkasan Order</CardTitle>

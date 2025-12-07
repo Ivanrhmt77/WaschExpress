@@ -4,8 +4,8 @@ import { Shirt, WashingMachine, Truck, Zap, Package } from "lucide-react";
 export const mockCustomers: Customer[] = [
   {
     id: "CUST-001",
-    name: "Budi Santoso",
-    whatsapp: "6281234567890",
+    name: "Kats",
+    whatsapp: "6285609580519",
     address: "Jl. Merdeka No. 1, Jakarta",
     totalOrders: 5,
     createdAt: new Date("2023-10-15"),
@@ -101,7 +101,7 @@ export const mockOrders: Order[] = [
   {
     id: "ORD-001",
     customerId: "CUST-001",
-    customerName: "Budi Santoso",
+    customerName: "Kats",
     items: [
       {
         serviceId: "SVC-002",

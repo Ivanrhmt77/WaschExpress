@@ -39,12 +39,33 @@ export function OrderDetailClientPage({
   const [order, setOrder] = useState(initialOrder);
   const { toast } = useToast();
 
-  const handleStatusChange = (newStatus: OrderStatus) => {
-    setOrder({ ...order, status: newStatus });
-    toast({
-      title: "Status Diperbarui",
-      description: `Status order #${order.id} telah diperbarui menjadi "${newStatus}".`,
-    });
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+
+  const handleStatusChange = async (newStatus: OrderStatus) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/jobs/${order.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || `HTTP ${res.status}`);
+      }
+
+      // update local UI state
+      setOrder((prev) => ({ ...prev, status: newStatus }));
+      toast({
+        title: "Status Diperbarui",
+        description: `Status order #${order.id} telah diperbarui menjadi "${newStatus}".`,
+      });
+    } catch (e: any) {
+      toast({
+        title: "Gagal memperbarui status",
+        description: e?.message || String(e),
+      });
+    }
   };
 
   const handleSendWhatsApp = () => {
@@ -54,11 +75,16 @@ export function OrderDetailClientPage({
       `Kamu bisa cek progress lengkapnya di link berikut:\n${window.location.origin}/track/${order.id}\n\n` +
       `Terima kasih telah menggunakan layanan kami! 🧺✨`;
 
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${
-      customer.whatsapp
-    }&text=${encodeURIComponent(message)}`;
+    const rawPhone = (customer as any).whatsapp || (customer as any).phone || "";
+    const digits = rawPhone.replace(/\D/g, "");
+    if (!digits) {
+      toast({ title: "Nomor telepon tidak tersedia", description: "Tidak ada nomor WhatsApp yang tersimpan untuk pelanggan ini." });
+      return;
+    }
 
-    window.open(whatsappUrl, "_blank");
+    // Use wa.me which expects the number in international format without + or symbols
+    const waLink = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+    window.open(waLink, "_blank");
   };
 
   const formatCurrency = (amount: number) => {

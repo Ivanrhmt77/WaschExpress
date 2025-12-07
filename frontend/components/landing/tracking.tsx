@@ -10,7 +10,7 @@ export default function Tracking() {
   const router = useRouter();
 
   const handleSubmit = () => {
-    if (trackingCode.trim() === "") return; // Jangan redirect kalau kosong
+    if (trackingCode.trim() === "") return;
     router.push(`/track/${trackingCode.trim()}`);
   };
 

@@ -2,7 +2,7 @@ import Hero from "@/components/landing/hero";
 import Pricing from "@/components/landing/pricing";
 import Services from "@/components/landing/services";
 import Tracking from "@/components/landing/tracking";
-import Contact from "@/components/landing/contact";
+import OrderSection from "@/components/landing/order-section";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
       <Services />
       <Pricing />
       <Tracking />
-      <Contact />
+      <OrderSection />
     </>
   );
 }
